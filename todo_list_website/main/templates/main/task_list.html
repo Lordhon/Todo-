@@ -1,0 +1,38 @@
+
+
+
+{% if request.user.is_authenticated %}
+    <p>{{ request.user }}</p>
+    <form method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit">Выход</button>
+</form>
+{% else %}
+    <a href="{% url 'login' %}">Войти</a>
+{% endif %}
+<hr>
+
+
+
+<h1>Мой ToDo list</h1>
+<a href="task-create">Добавить запись </a>
+
+<table>
+    <tr>
+        <th>Items</th>
+        <th></th>
+        <th></th>
+
+
+    </tr>
+    {% for task in tasks %}
+    <tr>
+        <td>{{ task.title }}</td>
+        <td><a href="{% url 'task' task.id %}">Посмотреть </a></td>
+        <td><a href="{% url 'task-update' task.id %}">Редактировать</a></td>
+        <td><a href="{% url 'task-delete' task.id %}">Удалить </a></td>
+    </tr>
+    {% empty %}
+    <h3>No items in list</h3>
+    {% endfor %}
+</table>
