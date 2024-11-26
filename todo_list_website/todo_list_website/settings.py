@@ -9,22 +9,26 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+import os.path
 from importlib import import_module
 from pathlib import Path
+from pickle import FALSE
 
+import environ
 
 from django.conf.global_settings import LOGIN_URL
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+env = environ.Env()
+environ.Env.read_env(env_file=os.path.join(BASE_DIR, '.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-rwe2qjz=8sdjifdvo#y%^wiv)x4ejv!x)s#(r@a&34oh*8b&40'
+SECRET_KEY = 'eqwdasdrf42daEqerewrwe,rwqeahsdguarwefsa'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -77,22 +81,32 @@ WSGI_APPLICATION = 'todo_list_website.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'todo',
         'USER': 'root',
         'PASSWORD': 'Timofey19',
-        'HOST': '127.0.0.1',
+        'HOST': 'localhost',  # Имя сервиса в docker-compose.yml
         'PORT': '3306',
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
-        }
     }
 }
 
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",  # Адрес Redis и номер базы (1)
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+        "KEY_PREFIX": "todo"
+    }
+}
 
-
+# Использование Redis для сессий
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -135,3 +149,23 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        'performance': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    },
+}

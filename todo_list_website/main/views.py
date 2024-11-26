@@ -8,6 +8,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
 from .models import Task
 from django.contrib.auth import login
+from django.core.cache import cache
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
+
+
+
 
 class CustomLoginView(LoginView):
     template_name = 'main/login.html'
@@ -22,18 +28,38 @@ class TaskList(LoginRequiredMixin, ListView):
     model = Task
     context_object_name = 'tasks'
 
+    def get_context_data(self, **kwargs):
 
-    def get_context_data(self,  **kwargs):
         context = super().get_context_data(**kwargs)
-        context['tasks'] = context['tasks'].filter(user=self.request.user)
-        context['count'] = context['tasks'].filter(complete = False).count
+        user = self.request.user
+
+        # Кэширование задач
+        cache_key = f'tasks_user_{user.id}'
+        tasks = cache.get(cache_key)
+
+        if not tasks:
+            tasks = context['tasks'].filter(user=user)
+            cache.set(cache_key, tasks, timeout=60 * 5)
+
+        context['tasks'] = tasks
+        context['count'] = tasks.filter(complete=False).count()
+
+
         return context
+
+
 
 
 class TaskDetail(LoginRequiredMixin, DetailView):
     model = Task
     context_object_name = 'task'
     template_name = 'main/list.html'
+
+    @method_decorator(cache_page(60 * 5))  # Кэшируем весь ответ на 5 минут
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+
 
 
 
@@ -47,6 +73,7 @@ class RegisterPage(FormView):
         if user is not None:
             login(self.request,user)
         return super(RegisterPage , self).form_valid(form)
+
 class TaskCreate(LoginRequiredMixin, CreateView):
     model = Task
     fields = ['title', 'description', 'complete']  # Указывайте только нужные поля
@@ -67,5 +94,6 @@ class DeleteViewTask(LoginRequiredMixin, DeleteView):
     model = Task
     context_object_name = 'task'
     success_url = reverse_lazy('tasks')
+
 
 
