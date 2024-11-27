@@ -1,4 +1,4 @@
-
+from django.shortcuts import render
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView , FormView
@@ -50,14 +50,20 @@ class TaskList(LoginRequiredMixin, ListView):
 
 
 
-class TaskDetail(LoginRequiredMixin, DetailView):
+class TaskDetail(LoginRequiredMixin , DetailView):
     model = Task
     context_object_name = 'task'
     template_name = 'main/list.html'
 
-    @method_decorator(cache_page(60 * 5))  # Кэшируем весь ответ на 5 минут
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
+    def task_detail(request, pk):
+        cache_key = f'task_{pk}'
+        task = cache.get(cache_key)
+
+        if not task:
+            task = Task.objects.get(pk=pk)  # Получаем задачу из базы
+            cache.set(cache_key, task, timeout=60 * 5)  # Кэшируем задачу на 5 минут
+
+        return render(request, 'tasks/task_detail.html', {'task': task})
 
 
 

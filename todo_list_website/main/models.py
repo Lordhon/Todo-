@@ -11,6 +11,7 @@ class Task(models.Model):
     description = models.TextField(null=True, blank=True)
     complete = models.BooleanField(default=False)
     create = models.DateTimeField(auto_now_add=True)
+    objects = models.Manager()
 
     def __str__(self):
         return self.title
@@ -36,6 +37,18 @@ def update_cache_on_delete(sender, instance, **kwargs):
     Очистка кэша при удалении задачи.
     """
     cache_key = f'tasks_user_{instance.user.id}'
+    cache.delete(cache_key)
+
+
+@receiver(post_save, sender=Task)
+def update_cache_on_save(sender, instance, **kwargs):
+    """
+    Удаление кэша задачи при изменении задачи.
+    """
+    # Формируем ключ кэша задачи пользователя
+    cache_key = f'tasks_user_{instance.user.id}'
+
+    # Удаляем кэш, чтобы при следующем запросе обновленные данные были актуальными
     cache.delete(cache_key)
 
 
