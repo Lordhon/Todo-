@@ -17,7 +17,7 @@ from pickle import FALSE
 
 
 from django.conf.global_settings import LOGIN_URL
-
+from tutorial.settings import BASE_DIR
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
@@ -140,7 +140,11 @@ LOGIN_URL = 'login'
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",  # Папка static в корне проекта
+]
 
 
 # Default primary key field type
