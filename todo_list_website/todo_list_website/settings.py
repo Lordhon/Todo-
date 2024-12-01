@@ -142,9 +142,7 @@ LOGIN_URL = 'login'
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [
-    BASE_DIR / "static",  # Папка static в корне проекта
-]
+
 
 
 # Default primary key field type
