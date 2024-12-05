@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+  web:
+    build:
+      context: ./todo_list_website
+    container_name: django-app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+    environment:
+      DJANGO_SETTINGS_MODULE: todo_list_website.settings
+      MYSQL_HOST: db
+      MYSQL_PORT: 3306
+      MYSQL_USER: user
+      MYSQL_PASSWORD: Timofey19
+      MYSQL_DATABASE: todo
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+  db:
+    image: mysql:8.0
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: todo
+      MYSQL_USER: user
+      MYSQL_PASSWORD: Timofey19
+      MYSQL_ROOT_PASSWORD: Timofey19
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"

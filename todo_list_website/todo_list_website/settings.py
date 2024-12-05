@@ -86,7 +86,7 @@ DATABASES = {
         'NAME': 'todo',
         'USER': 'root',
         'PASSWORD': 'Timofey19',
-        'HOST': 'localhost',  # Имя сервиса в docker-compose.yml
+        'HOST': 'db',  # Имя сервиса в docker-compose.yml
         'PORT': '3306',
     }
 }
@@ -94,7 +94,7 @@ DATABASES = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",  # Адрес Redis и номер базы (1)
+        "LOCATION": "redis://redis:6379/1",  # Адрес Redis и номер базы (1)
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
