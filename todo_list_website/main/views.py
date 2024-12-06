@@ -50,20 +50,12 @@ class TaskList(LoginRequiredMixin, ListView):
 
 
 
-class TaskDetail(LoginRequiredMixin , DetailView):
+class TaskDetail( DetailView):
     model = Task
     context_object_name = 'task'
     template_name = 'main/list.html'
 
-    def task_detail(request, pk):
-        cache_key = f'task_{pk}'
-        task = cache.get(cache_key)
 
-        if not task:
-            task = Task.objects.get(pk=pk)  # Получаем задачу из базы
-            cache.set(cache_key, task, timeout=60 * 5)  # Кэшируем задачу на 5 минут
-
-        return render(request, 'tasks/task_detail.html', {'task': task})
 
 
 
