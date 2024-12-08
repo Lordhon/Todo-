@@ -13,6 +13,8 @@ import os.path
 from importlib import import_module
 from pathlib import Path
 from pickle import FALSE
+import  os
+from dotenv import load_dotenv
 
 
 
@@ -26,7 +28,7 @@ from tutorial.settings import BASE_DIR
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'eqwdasdrf42daEqerewrwe,rwqeahsdguarwefsa'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -79,15 +81,15 @@ WSGI_APPLICATION = 'todo_list_website.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-
+load_dotenv()
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'todo',
-        'USER': 'root',
-        'PASSWORD': 'Timofey19',
-        'HOST': 'db',  # Имя сервиса в docker-compose.yml
-        'PORT': '3306',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
 

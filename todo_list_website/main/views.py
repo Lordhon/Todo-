@@ -9,8 +9,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import Task
 from django.contrib.auth import login
 from django.core.cache import cache
-from django.views.decorators.cache import cache_page
-from django.utils.decorators import method_decorator
+
 
 
 
