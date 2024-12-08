@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'todo_list_website.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-load_dotenv()
+load_dotenv(BASE_DIR / 'config' / '.env')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',

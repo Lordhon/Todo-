@@ -6,7 +6,7 @@ services:
       context: ./todo_list_website
     container_name: django-app
     env_file:
-      .env
+      ./config/.env
     ports:
       - "8000:8000"
     depends_on:
